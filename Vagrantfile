@@ -1,23 +1,64 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant.configure(2) do |config|
-  config.vm.define "ubuntu-php7" do |srv|
+VAGRANTFILE_API_VERSION = "2"
 
-    srv.vm.box = "bento/ubuntu-16.04"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-    srv.vm.hostname = "desarrollo"
-    srv.vm.network "forwarded_port", guest: 80, host: 8098
-    srv.vm.network "private_network", ip: "192.168.33.18"
+    config.vm.box = "bento/ubuntu-16.04"
 
-    srv.vm.synced_folder "www/", "/var/www/html"
+    config.vm.define :db do |db_config|
+        db_config.vm.hostname = "db"
+        db_config.vm.network :private_network, :ip => "192.168.33.10"
 
-    srv.vm.provider "virtualbox" do |vb|
-      vb.memory = "512"
+        db_config.vm.provision "ansible" do |ansible|
+          ansible.playbook = "provision/db/playbook.yml"
+        end
+
+        db_config.vm.provider "virtualbox" do |vb|
+            vb.memory = "768"
+        end
     end
 
-    srv.vm.provision "ansible" do |ansible|
-      ansible.playbook = "provision/playbook.yml"
+    config.vm.define :web do |web_config|
+
+        web_config.vm.hostname = "web1"
+        web_config.vm.network :private_network, :ip => "192.168.33.11"
+
+        web_config.vm.provision "ansible" do |ansible|
+          ansible.playbook = "provision/web/playbook.yml"
+        end
+
+        web_config.vm.provider "virtualbox" do |vb|
+            vb.memory = "512"
+        end
     end
-  end
+
+    config.vm.define :web2 do |web_config|
+
+        web_config.vm.hostname = "web2"
+        web_config.vm.network :private_network, :ip => "192.168.33.12"
+
+        web_config.vm.provision "ansible" do |ansible|
+          ansible.playbook = "provision/web/playbook.yml"
+        end
+
+        web_config.vm.provider "virtualbox" do |vb|
+            vb.memory = "512"
+        end
+    end
+
+    config.vm.define :web3 do |web_config|
+
+        web_config.vm.hostname = "web3"
+        web_config.vm.network :private_network, :ip => "192.168.33.13"
+
+        web_config.vm.provision "ansible" do |ansible|
+          ansible.playbook = "provision/web/playbook.yml"
+        end
+
+        web_config.vm.provider "virtualbox" do |vb|
+            vb.memory = "512"
+        end
+    end
 end
