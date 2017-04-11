@@ -1,0 +1,8 @@
+---
+- hosts: all
+  roles:
+    - { role: geerlingguy.apache, become: true }
+    - { role: geerlingguy.php, become: true }
+    - { role: geerlingguy.php-mysql, become: true }
+    - { role: geerlingguy.composer, become: true }
+    - { role: geerlingguy.git, become: true }
