@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.define :db do |db_config|
         db_config.vm.hostname = "db"
-        db_config.vm.network :private_network, :ip => "192.168.33.10"
+        db_config.vm.network :private_network, :ip => "192.168.33.18"
 
         db_config.vm.provision "ansible" do |ansible|
           ansible.playbook = "provision/db/playbook.yml"
@@ -33,9 +33,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
            end
 
            loadbalancer.vm.box = "bento/ubuntu-16.04"
-           loadbalancer.vm.network :private_network, ip: "192.168.30.19"
+           loadbalancer.vm.network :private_network, ip: "192.168.33.19"
            loadbalancer.ssh.forward_agent = true
            loadbalancer.vm.synced_folder "./", "/vagrant"
+
+           loadbalancer.vm.provision "ansible" do |ansible|
+                ansible.playbook = "provision/loadbalancer/playbook.yml"
+           end
     end
 
     (1..3).each do |i|
