@@ -20,7 +20,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
     end
 
-    (1..2).each do |i|
+    config.vm.define :loadbalancer do |loadbalancer|
+           loadbalancer.vm.provider :virtualbox do |v|
+               v.name = "loadbalancer"
+               v.customize [
+                   "modifyvm", :id,
+                   "--name", "loadbalancer",
+                   "--memory", 384,
+                   "--natdnshostresolver1", "on",
+                   "--cpus", 1,
+               ]
+           end
+
+           loadbalancer.vm.box = "bento/ubuntu-16.04"
+           loadbalancer.vm.network :private_network, ip: "192.168.30.19"
+           loadbalancer.ssh.forward_agent = true
+           loadbalancer.vm.synced_folder "./", "/vagrant"
+    end
+
+    (1..3).each do |i|
       config.vm.define "web#{i}" do |web_config|
 
           web_config.vm.hostname = "web#{i}"
