@@ -13,6 +13,7 @@ __php_packages:
   - php7.0-zip
   - php-apcu
   - php7.0-mbstring
+  - php-mcrypt
   - libapache2-mod-php7.0
 __php_webserver_daemon: "apache2"
 

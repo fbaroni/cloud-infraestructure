@@ -42,7 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
            end
     end
 
-    (1..3).each do |i|
+    (1..2).each do |i|
       config.vm.define "web#{i}" do |web_config|
 
           web_config.vm.hostname = "web#{i}"
@@ -50,10 +50,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
           web_config.vm.provision "ansible" do |ansible|
             ansible.playbook = "provision/web/playbook.yml"
+            ansible.extra_vars = {
+              vagrant_magento2_base_url: "192.168.33.1#{i}",
+            }
           end
 
           web_config.vm.provider "virtualbox" do |vb|
-              vb.memory = "384"
+              vb.memory = "1024"
           end
       end
     end
