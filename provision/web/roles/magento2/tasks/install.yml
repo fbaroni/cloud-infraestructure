@@ -4,7 +4,7 @@
     --cleanup-database \
     --backend-frontname=admin \
     --session-save=db \
-    --db-host=localhost \
+    --db-host={{ vagrant_db_ip }}  \
     --db-user={{ mysql_user }} \
     --db-password={{ mysql_password }} \
     --db-name={{ mysql_dbname }} \

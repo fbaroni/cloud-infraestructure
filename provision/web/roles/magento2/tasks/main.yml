@@ -21,8 +21,13 @@
 - include: vendor.yml
   when: magento2_vendor_dir.stat.exists == False
 
+- name: Install MySQL Client.
+  apt:
+    name: mysql-client-5.7
+    state: present
+
 - name: Check if magento2 is installed
-  shell: mysql -u root -Ns -e "SELECT COUNT(DISTINCT table_name) FROM information_schema.columns WHERE table_schema = 'magento2'"
+  shell: mysql -u root -Ns -e -h{{ vagrant_db_ip }} "SELECT COUNT(DISTINCT table_name) FROM information_schema.columns WHERE table_schema = 'magento2'"
   become: true
   register: magento2_tables_count
 
