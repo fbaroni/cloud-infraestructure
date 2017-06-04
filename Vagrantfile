@@ -51,7 +51,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           web_config.vm.provision "ansible" do |ansible|
             ansible.playbook = "provision/web/playbook.yml"
             ansible.extra_vars = {
-              vagrant_magento2_base_url: "192.168.33.1#{i}",
+              vagrant_magento2_base_url: "http://192.168.33.1#{i}",
               vagrant_db_ip: "192.168.33.18"
             }
           end

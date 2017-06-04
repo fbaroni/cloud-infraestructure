@@ -1,9 +1,9 @@
 ---
 - name: Ensure project directory exists
-  file: path=/home/vagrant/repos/magento2 state=directory
+  file: path=/var/www/html//magento2 state=directory
 
 - name: Create project
-  shell: composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition /home/vagrant/repos/magento2
+  shell: composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition /var/www/html//magento2
   args:
-    chdir: /home/vagrant/repos/magento2
-    creates: /home/vagrant/repos/magento2/composer.json
+    chdir: /var/www/html//magento2
+    creates: /var/www/html//magento2/composer.json

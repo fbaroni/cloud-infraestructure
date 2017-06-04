@@ -19,4 +19,4 @@
     --key={{ magento2_crypt_key }} \
     --base-url={{ vagrant_magento2_base_url }}
   args:
-    chdir: /home/vagrant/repos/magento2
+    chdir: /var/www/html//magento2
