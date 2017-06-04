@@ -104,11 +104,11 @@ mysql_databases: []
 #     replicate: 1
 
 # Users.
-mysql_users: []
-#   - name: example
-#     host: 127.0.0.1
-#     password: secret
-#     priv: *.*:USAGE
+mysql_users:
+   - name: db
+     host: "%"
+     password: db
+     priv: "*.*:ALL"
 
 # Replication settings (replication is only enabled if master/user have values).
 mysql_server_id: "1"
