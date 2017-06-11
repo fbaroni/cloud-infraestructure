@@ -1,0 +1,107 @@
+---
+# these tasks install and configure prestashop
+- name: install python mysql bindings
+  apt: name=python-mysqldb state=installed
+
+- name: Install MySQL Client.
+  apt:
+   name: mysql-client-5.7
+   state: present
+
+- name: create a mysql user
+  mysql_user:
+    name: "{{ mysql_db_user }}"
+    password: "{{ mysql_db_password }}"
+    host: "{{ vagrant_db_ip }}"
+    priv: '*.*:ALL'
+    state: present
+
+- name: setup empty database for project
+  mysql_db:
+    name: "{{ mysql_db_name }}"
+    host: "{{ vagrant_db_ip }}"
+    encoding: "{{ mysql_encoding }}"
+    collation: "{{ mysql_collation }}"
+    login_user: "{{ mysql_db_user }}"
+    login_password: "{{ mysql_db_password }}"
+    state: present
+
+- name: remove apache default directory
+  file:
+    path: /var/www/html
+    state: absent
+
+- name: check if prestashop download exists
+  stat:
+    path: "/tmp/prestashop_{{ prestashop_version }}.zip"
+  register: tmp_download
+
+- name: download prestashop
+  get_url:
+    url: "{{ prestashop_download }}/prestashop_{{ prestashop_version }}.zip"
+    dest: "/tmp/prestashop_{{ prestashop_version }}.zip"
+    force: yes
+  when: tmp_download.stat.exists == false
+
+- name: unarchive prestashop download
+  unarchive:
+    src: "/tmp/prestashop_{{ prestashop_version }}.zip"
+    dest: /tmp
+    copy: no
+
+- name: check if prestashop.zip exists
+  stat:
+    path: /tmp/prestashop.zip
+  register: tmp_zip
+
+- name: creates apache default directory
+  file:
+    path: /var/www/html
+    state: directory
+  when: tmp_zip.stat.exists == true
+
+- name: unarchive prestashop source
+  unarchive:
+    src: /tmp/prestashop.zip
+    dest: /var/www/html
+    copy: no
+  when: tmp_zip.stat.exists == true
+
+- name: check if prestashop directory exists
+  stat:
+    path: /tmp/prestashop
+  register: tmp_dir
+
+- name: copy prestashop source
+  command: mv /tmp/prestashop /var/www/html
+  when: tmp_dir.stat.exists == true
+
+- name: remove prestashop tmp directory
+  file:
+    path: /tmp/prestashop
+    state: absent
+  when: tmp_dir.stat.exists == true
+
+- name: install prestashop using cli
+  command: /usr/bin/php index_cli.php --domain={{ host_name }} --db_server={{ mysql_host }} --db_user={{ mysql_db_user }} --db_password={{ mysql_db_password }} --db_name={{ mysql_db_name }} --db_clear=1 --language={{ prestashop_language }} --timezone={{ prestashop_timezone }} --country={{ prestashop_country }} --firstname={{ prestashop_firstname }} --lastname={{ prestashop_lastname }} --password={{ prestashop_password }}  --email={{ prestashop_email }} --newsletter=0 chdir=/var/www/html/install
+  ignore_errors: yes
+  no_log: yes
+
+- name: remove prestashop install directory
+  file:
+    path: /var/www/html/install
+    state: absent
+
+- name: set permissions
+  file:
+    path: /var/www/html
+    mode: 0777
+    recurse: yes
+    state: directory
+    owner: "vagrant"
+    group: "vagrant"
+
+- name: restart apache
+  service:
+    name: apache2
+    state: restarted
