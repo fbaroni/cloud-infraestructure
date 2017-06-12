@@ -8,20 +8,22 @@
    name: mysql-client-5.7
    state: present
 
-- name: create a mysql user
-  mysql_user:
-    name: "{{ mysql_db_user }}"
-    password: "{{ mysql_db_password }}"
-    host: "{{ vagrant_db_ip }}"
-    priv: '*.*:ALL'
-    state: present
+- name: Install zip
+  apt:
+   name: zip
+   state: present
+
+- name: Install unzip
+  apt:
+   name: unzip
+   state: present
 
 - name: setup empty database for project
   mysql_db:
     name: "{{ mysql_db_name }}"
-    host: "{{ vagrant_db_ip }}"
-    encoding: "{{ mysql_encoding }}"
-    collation: "{{ mysql_collation }}"
+    login_host: "{{ vagrant_db_ip }}"
+    encoding: "{{ mysql_db_encoding }}"
+    collation: "{{ mysql_db_collation }}"
     login_user: "{{ mysql_db_user }}"
     login_password: "{{ mysql_db_password }}"
     state: present
@@ -83,7 +85,7 @@
   when: tmp_dir.stat.exists == true
 
 - name: install prestashop using cli
-  command: /usr/bin/php index_cli.php --domain={{ host_name }} --db_server={{ mysql_host }} --db_user={{ mysql_db_user }} --db_password={{ mysql_db_password }} --db_name={{ mysql_db_name }} --db_clear=1 --language={{ prestashop_language }} --timezone={{ prestashop_timezone }} --country={{ prestashop_country }} --firstname={{ prestashop_firstname }} --lastname={{ prestashop_lastname }} --password={{ prestashop_password }}  --email={{ prestashop_email }} --newsletter=0 chdir=/var/www/html/install
+  command: /usr/bin/php index_cli.php --domain={{ vagrant_host }} --db_server={{ vagrant_db_ip }} --db_user={{ mysql_db_user }} --db_password={{ mysql_db_password }} --db_name={{ mysql_db_name }} --db_clear=1 --language={{ prestashop_language }} --timezone={{ prestashop_timezone }} --country={{ prestashop_country }} --firstname={{ prestashop_firstname }} --lastname={{ prestashop_lastname }} --password={{ prestashop_password }}  --email={{ prestashop_email }} --newsletter=0 chdir=/var/www/html/install
   ignore_errors: yes
   no_log: yes
 

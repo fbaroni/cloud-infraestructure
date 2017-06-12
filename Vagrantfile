@@ -52,7 +52,8 @@ Vagrant.configure("2") do |config|
          web_config.vm.provision "ansible" do |ansible|
            ansible.playbook = "provision/web/playbook.yml"
            ansible.extra_vars = {
-               vagrant_db_ip: "192.168.33.18"
+               vagrant_db_ip: "192.168.33.18",
+               vagrant_host: "192.168.33.1#{i}",
            }
          end
 
