@@ -1,15 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VAGRANTFILE_API_VERSION = "2"
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure("2") do |config|
 
     config.vm.box = "bento/ubuntu-16.04"
 
     config.vm.define :db do |db_config|
         db_config.vm.hostname = "db"
         db_config.vm.network :private_network, :ip => "192.168.33.18"
+        db_config.vm.synced_folder "www/", "/var/www/html"
 
         db_config.vm.provision "ansible" do |ansible|
           ansible.playbook = "provision/db/playbook.yml"
