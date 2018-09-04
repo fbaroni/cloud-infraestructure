@@ -1,7 +1,7 @@
 upstream application {
-    server 192.168.33.11;
-    server 192.168.33.12;
-    server 192.168.33.13;
+    server 192.168.35.11;
+    server 192.168.35.12;
+    server 192.168.35.13;
 }
 
 server {
