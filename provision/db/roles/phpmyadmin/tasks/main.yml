@@ -1,4 +1,0 @@
-- name: Install PHPMyAdmin
-  apt:
-   name: phpmyadmin
-   state: present

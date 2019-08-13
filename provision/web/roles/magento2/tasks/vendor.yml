@@ -1,3 +1,0 @@
----
-- name: Install vendor packages
-  composer: command=install working_dir=/var/www/html//magento2

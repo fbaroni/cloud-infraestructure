@@ -34,11 +34,17 @@ The default values for the HTTP server deamon are `httpd` (used by Apache) for R
 
 (RedHat/CentOS only) If you have enabled any additional repositories (might I suggest [geerlingguy.repo-epel](https://github.com/geerlingguy/ansible-role-repo-epel) or [geerlingguy.repo-remi](https://github.com/geerlingguy/ansible-role-repo-remi)), those repositories can be listed under this variable (e.g. `remi-php70,epel`). This can be handy, as an example, if you want to install the latest version of PHP 7.0, which is in the Remi repository.
 
-    php_packages_state: "installed"
+    php_default_version_debian: "7.0"
 
-If you have enabled any additional repositories such as [geerlingguy.repo-epel](https://github.com/geerlingguy/ansible-role-repo-epel) or [geerlingguy.repo-remi](https://github.com/geerlingguy/ansible-role-repo-remi), you may want an easy way to swap PHP versions on the fly. By default, this is set to 'installed'. You can now override this variable to 'latest'. Combined with php_enablerepo, a user now doesn't need to manually uninstall the existing PHP packages before installing them from a different repository.
+(Debian/Ubuntu only) The default version of PHP in the given OS version repositories. Defaults to the latest Ubuntu LTS release. Ubuntu 18.04 needs this to be set to `"7.2"` since PHP 7.0 is not available in the default bionic packages.
 
-    php_install_recommends: yes
+**If you'd like to be able to switch PHP versions easily, or use a version that's not available in system packages**: You can use the [`geerlingguy.php-versions`](https://galaxy.ansible.com/geerlingguy/php-versions/) role to more easily switch between major PHP versions (e.g. 5.6, 7.1, 7.2).
+
+    php_packages_state: "present"
+
+If you have enabled any additional repositories such as [geerlingguy.repo-epel](https://github.com/geerlingguy/ansible-role-repo-epel) or [geerlingguy.repo-remi](https://github.com/geerlingguy/ansible-role-repo-remi), you may want an easy way to swap PHP versions on the fly. By default, this is set to `"present"`. You can override this variable to `"latest"` to upgrade to the latest available version. Combined with `php_enablerepo`, a user now doesn't need to manually uninstall the existing PHP packages before installing them from a different repository.
+
+    php_install_recommends: true
 
 (Debian/Ubuntu only) Whether to install recommended packages when installing `php_packages`; you might want to set this to `no` explicitly if you're installing a PPA that recommends certain packages you don't want (e.g. Ondrej's `php` PPA will install `php7.0-cli` if you install `php-pear` alongside `php5.6-cli`... which is often not desired!).
 
@@ -63,7 +69,7 @@ If you're using Apache, you can easily get it configured to work with PHP-FPM us
     php_fpm_pm_min_spare_servers: 5
     php_fpm_pm_max_spare_servers: 5
 
-Specific settings inside the default `www.conf` PHP-FPM pool. If you'd like to manage additional settings, you can do so either by replacing the file with your own template or using `lineinfile` like this role does inside `tasks/configure.yml`.
+Specific settings inside the default `www.conf` PHP-FPM pool. If you'd like to manage additional settings, you can do so either by replacing the file with your own template or using `lineinfile` like this role does inside `tasks/configure-fpm.yml`.
 
 ### php.ini settings
 
@@ -71,12 +77,16 @@ Specific settings inside the default `www.conf` PHP-FPM pool. If you'd like to m
 
 By default, all the extra defaults below are applied through the php.ini included with this role. You can self-manage your php.ini file (if you need more flexility in its configuration) by setting this to `false` (in which case all the below variables will be ignored).
 
+    php_fpm_pool_user: "[apache|nginx|other]" # default varies by OS
+    php_fpm_pool_group: "[apache|nginx|other]" # default varies by OS
     php_memory_limit: "256M"
     php_max_execution_time: "60"
     php_max_input_time: "60"
     php_max_input_vars: "1000"
     php_realpath_cache_size: "32K"
+    php_file_uploads: "On"
     php_upload_max_filesize: "64M"
+    php_max_file_uploads: "20"
     php_post_max_size: "32M"
     php_date_timezone: "America/Chicago"
     php_allow_url_fopen: "On"
@@ -214,4 +224,4 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2014 by [Jeff Geerling](http://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
+This role was created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
